@@ -1,0 +1,12 @@
+﻿ปรับแก้
+table
+-sys_report
+procedure
+- ncdscreen_ht_false 
+- ncdscreen_check    
+- labfu_hba1c_not_standard 
+- labfu_Creatinine_not_standard
+- labfu_hba1c_not_standard
+- labfu_microalbumin_not_standard
+เพิ่มรายงาน
+labfu_ldl_not_standard
