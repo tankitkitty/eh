@@ -267,14 +267,14 @@ if(!Yii::$app->user->isGuest){
      $sql = " SELECT *
                   FROM sys_report r 
                   WHERE r.report_id IN(10014, 24, 26, 10042, 10018, 10039, 23, 10020, 10012, 10016)
-                   AND active=1
+                   
                   GROUP BY r.report_id";
               $rname_topten = \Yii::$app->db->createCommand($sql)->queryAll();  
               for($i=0;$i<sizeof($rname_topten);$i++){
                  $sql = "SELECT n.snt_id,n.hospcode,n.distcode,n.hmain,n.report_id,r.report_name,n.report_group,
                         SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent
                       FROM sys_Notifications n LEFT JOIN sys_report r ON n.report_id=r.report_id
-                      WHERE active=1 AND n.report_id='".$rname_topten[$i]['report_id']."'   
+                      WHERE  n.report_id='".$rname_topten[$i]['report_id']."'   
                        $toptenwhere;"; 
                        if(!empty($hospcode)){
               $notify_topten[$i] = \Yii::$app->db->createCommand($sql)->bindValue(':h', $hospcode)->queryAll();  
@@ -302,14 +302,14 @@ if(!Yii::$app->user->isGuest){
                $sql = " SELECT *
                   FROM sys_report r 
                   WHERE r.report_id IN(10014, 24, 26, 10042, 10018, 10039, 23, 10020, 10012, 10016)
-                   AND active=1
+                   
                   GROUP BY r.report_id";
               $rname_topten = \Yii::$app->db->createCommand($sql)->queryAll();  
               for($i=0;$i<sizeof($rname_topten);$i++){
                  $sql = "SELECT n.snt_id,n.hospcode,n.distcode,n.hmain,n.report_id,r.report_name,n.report_group,
                         SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent
                       FROM sys_Notifications n RIGHT JOIN sys_report r ON n.report_id=r.report_id
-                      WHERE active=1 AND n.report_id='".$rname_topten[$i]['report_id']."'   
+                      WHERE  n.report_id='".$rname_topten[$i]['report_id']."'   
                       ;"; 
               $notify_topten[$i] = \Yii::$app->db->createCommand($sql)->queryAll();  
               if(empty($notify_topten[$i][0]['report_id'])){
@@ -347,7 +347,7 @@ if(!Yii::$app->user->isGuest){
                  }
               }//endfor
             //end color&icon
-             
+              
                 for($ig=0;$ig<10;$ig++){
               if($notify_topten[$ig][0]['percent']==0){
                $cgt[$ig]['level_color']='aqua';
