@@ -120,12 +120,13 @@ echo '<h2>รายงาน::'.$reportname.'</h2>';
              $gridcolumns[]=[
              'attribute'=>$value['Field'],
               'value'=>function($data) use ($value) {
-
+                $fieldDate=['DATE_SERV','date_serv','BIRTH','birth'
+                ,'bdate','BDATE','newborn_bdate','ppcare','edc','bcare'];
                 if($value['Field']=='hosname'){
                   return  Html::a($data['hosname'],['runreport2','ctambon'=>$data['hospcode'],'r_table'=>$_GET['r_table']]);
                } if($value['Field']=='y_cases'){
                   return  Html::a($data['y_cases'],['runreport2','ctambon'=>$data['hospcode'],'r_table'=>$_GET['r_table']]);
-               }else if($value['Field']=='date_serv'){
+               }else if(in_array($value['Field'],$fieldDate)){
                 return Yii::$app->Udf->thDateAbbr($data[$value['Field']]);
                }else{
                   return  $data[$value['Field']];

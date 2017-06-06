@@ -138,18 +138,20 @@ echo '<h2>รายงาน::'.$reportname.'</h2>';
              #'hAlign' => GridView::ALIGN_RIGHT,
              'attribute'=>$value['Field'],
               'value'=>function($data) use ($value) {
-
+                $fieldDate=['DATE_SERV','date_serv','BIRTH','birth'
+                ,'bdate','BDATE','newborn_bdate','ppcare','edc','bcare'];
                 if($value['Field'] =='hosname'){
                   return  Html::a($data['hosname'],['runreport1','ctambon'=>$data['hospcode'],'campur'=>$_GET['campur'],'r_table'=>$_GET['r_table']]);
                }else if($value['Field']=='ampurname'){
                   return  Html::a($data['ampurname'],['runreport1', 'r_table'=>$_GET['r_table'],'campur'=>$data['distcode']]);
-               }else if($value['Field']=='date_serv'){
+               }else if(in_array($value['Field'],$fieldDate)){
+                $test=$data[$value['Field']];
                 return Yii::$app->Udf->thDateAbbr($data[$value['Field']]);
                }else{
                   return  $data[$value['Field']];
                 }
 
-
+               #  var_dump(gettype($data[$value['Field']]));
                 
              },
              #กำหนดการแสดงผล ถ้าเลือกหน่วยบริการแล้ว ไม่ต้องแสดง Hoscode 

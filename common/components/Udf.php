@@ -53,13 +53,17 @@ class Udf extends Component {
 
     public function thDateAbbr($date=null)
     {
-        $date = $date==""? date("Y-m-d"):$date;
+       # $date = $date==""? date("Y-m-d"):$date;
+        if(!is_null($date)){
         $Dates = explode('-',$date);
         if ($Dates[0]+0 >2300){
             return ($Dates[2]+0).' '.$this->thMonthAbbr($date).' '.$Dates[0];
         } else {
             return ($Dates[2]+0).' '.$this->thMonthAbbr($date).' '.($Dates[0]+543);
         }
+        }else{
+            return $date=null;
+        } //isnull
     }
 
     public function thaiMonth()
@@ -69,7 +73,7 @@ class Udf extends Component {
 
     public function thaiMonthAbbr()
     {
-        return [1=>'มค.',2=>'กพ.',3=>'มีค.',4=>'เมย.',5=>'พค.',6=>'มิย.',7=>'กค.',8=>'สค.',9=>'กย.',10=>'ตค.',11=>'พย.',12=>'ธค.'];
+        return [1=>'ม.ค.',2=>'ก.พ.',3=>'มี.ค.',4=>'เม.ย.',5=>'พ.ค.',6=>'มิ.ย.',7=>'ก.ค.',8=>'ส.ค.',9=>'ก.ย.',10=>'ต.ค.',11=>'พ.ย.',12=>'ธ.ค.'];
     }
 
     public function thMonth($month=0)
