@@ -120,7 +120,7 @@ echo '<h2>รายงาน::'.$reportname.'</h2>';
              $gridcolumns[]=[
              'attribute'=>$value['Field'],
               'value'=>function($data) use ($value) {
-                $fieldDate=['DATE_SERV','date_serv','BIRTH','birth'
+                $fieldDate=['DATE_SERV','date_serv','BIRTH','birth','ddeath','ddeath2'
                 ,'bdate','BDATE','newborn_bdate','ppcare','edc','bcare'];
                 if($value['Field']=='hosname'){
                   return  Html::a($data['hosname'],['runreport2','ctambon'=>$data['hospcode'],'r_table'=>$_GET['r_table']]);

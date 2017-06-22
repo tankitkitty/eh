@@ -3700,3 +3700,207 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1496720164.786
     'REQUEST_TIME' => 1496720164
 ]
+2017-06-16 12:27:20 [::1][718][e5moanr27vbfo3dp0965ctmvm1][error][yii\web\HttpException:403] exception 'yii\web\ForbiddenHttpException' with message 'คุณไม่ได้รับอนุญาตให้ดำเนินการนี้' in C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php:96
+Stack trace:
+#0 C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php(81): mdm\admin\components\AccessControl->denyAccess(Object(yii\web\User))
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\base\ActionFilter.php(71): mdm\admin\components\AccessControl->beforeAction(Object(yii\base\InlineAction))
+#2 [internal function]: yii\base\ActionFilter->beforeFilter(Object(yii\base\ActionEvent))
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Component.php(541): call_user_func(Array, Object(yii\base\ActionEvent))
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(606): yii\base\Component->trigger('beforeAction', Object(yii\base\ActionEvent))
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(142): yii\base\Module->beforeAction(Object(yii\base\InlineAction))
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('toolbar', Array)
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('debug/default/t...', Array)
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#9 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#10 {main}
+2017-06-16 12:27:20 [::1][718][e5moanr27vbfo3dp0965ctmvm1][info][application] $_GET = [
+    'r' => 'debug/default/toolbar'
+    'tag' => '59436c368c7c8'
+]
+
+$_COOKIE = [
+    '_ga' => 'GA1.1.257055982.1441083126'
+    '_csrf' => '922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3\";}'
+    'PHPSESSID' => 'e5moanr27vbfo3dp0965ctmvm1'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 718
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'localhost'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_ACCEPT' => 'text/html'
+    'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+    'HTTP_REFERER' => 'http://localhost/eh/frontend/web/index.php'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch, br'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.8'
+    'HTTP_COOKIE' => '_ga=GA1.1.257055982.1441083126; _csrf=922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3%22%3B%7D; PHPSESSID=e5moanr27vbfo3dp0965ctmvm1'
+    'PATH' => 'C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\wbem;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin64;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl\\Win64;C:\\Program Files\\Broadcom\\Broadcom 802.11 Network Adapter;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Intel\\WiFi\\bin;C:\\Program Files\\Common Files\\Intel\\WirelessCommon;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x64;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn;C:\\Program Files (x86)\\Common Files\\Ulead Systems\\MPEG;C:\\wamp\\bin\\php\\php5.5.12;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\android-sdk\\tools;C:\\android-sdk\\platform-tools;C:\\Program Files\\PuTTY\\'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => '<address>Apache/2.4.9 (Win64) PHP/5.5.12 Server at localhost Port 80</address>
+'
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win64) PHP/5.5.12'
+    'SERVER_NAME' => 'localhost'
+    'SERVER_ADDR' => '::1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '::1'
+    'DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'SERVER_ADMIN' => 'admin@example.com'
+    'SCRIPT_FILENAME' => 'C:/wamp/www/eh/frontend/web/index.php'
+    'REMOTE_PORT' => '63720'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=debug%2Fdefault%2Ftoolbar&tag=59436c368c7c8'
+    'REQUEST_URI' => '/eh/frontend/web/index.php?r=debug%2Fdefault%2Ftoolbar&tag=59436c368c7c8'
+    'SCRIPT_NAME' => '/eh/frontend/web/index.php'
+    'PHP_SELF' => '/eh/frontend/web/index.php'
+    'REQUEST_TIME_FLOAT' => 1497590840.089
+    'REQUEST_TIME' => 1497590840
+]
+2017-06-16 12:52:39 [::1][857][8fnq7c3ippmm83cqkphpcd0405][error][yii\web\HttpException:403] exception 'yii\web\ForbiddenHttpException' with message 'คุณไม่ได้รับอนุญาตให้ดำเนินการนี้' in C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php:96
+Stack trace:
+#0 C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php(81): mdm\admin\components\AccessControl->denyAccess(Object(yii\web\User))
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\base\ActionFilter.php(71): mdm\admin\components\AccessControl->beforeAction(Object(yii\base\InlineAction))
+#2 [internal function]: yii\base\ActionFilter->beforeFilter(Object(yii\base\ActionEvent))
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Component.php(541): call_user_func(Array, Object(yii\base\ActionEvent))
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(606): yii\base\Component->trigger('beforeAction', Object(yii\base\ActionEvent))
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(142): yii\base\Module->beforeAction(Object(yii\base\InlineAction))
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('toolbar', Array)
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('debug/default/t...', Array)
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#9 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#10 {main}
+2017-06-16 12:52:38 [::1][857][8fnq7c3ippmm83cqkphpcd0405][info][application] $_GET = [
+    'r' => 'debug/default/toolbar'
+    'tag' => '5943722657799'
+]
+
+$_COOKIE = [
+    '_ga' => 'GA1.1.257055982.1441083126'
+    '_csrf' => '922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3\";}'
+    'PHPSESSID' => '8fnq7c3ippmm83cqkphpcd0405'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 857
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'localhost'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_ACCEPT' => 'text/html'
+    'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+    'HTTP_REFERER' => 'http://localhost/eh/frontend/web/index.php'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch, br'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.8'
+    'HTTP_COOKIE' => '_ga=GA1.1.257055982.1441083126; _csrf=922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3%22%3B%7D; PHPSESSID=8fnq7c3ippmm83cqkphpcd0405'
+    'PATH' => 'C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\wbem;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin64;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl\\Win64;C:\\Program Files\\Broadcom\\Broadcom 802.11 Network Adapter;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Intel\\WiFi\\bin;C:\\Program Files\\Common Files\\Intel\\WirelessCommon;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x64;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn;C:\\Program Files (x86)\\Common Files\\Ulead Systems\\MPEG;C:\\wamp\\bin\\php\\php5.5.12;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\android-sdk\\tools;C:\\android-sdk\\platform-tools;C:\\Program Files\\PuTTY\\'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => '<address>Apache/2.4.9 (Win64) PHP/5.5.12 Server at localhost Port 80</address>
+'
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win64) PHP/5.5.12'
+    'SERVER_NAME' => 'localhost'
+    'SERVER_ADDR' => '::1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '::1'
+    'DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'SERVER_ADMIN' => 'admin@example.com'
+    'SCRIPT_FILENAME' => 'C:/wamp/www/eh/frontend/web/index.php'
+    'REMOTE_PORT' => '64628'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=debug%2Fdefault%2Ftoolbar&tag=5943722657799'
+    'REQUEST_URI' => '/eh/frontend/web/index.php?r=debug%2Fdefault%2Ftoolbar&tag=5943722657799'
+    'SCRIPT_NAME' => '/eh/frontend/web/index.php'
+    'PHP_SELF' => '/eh/frontend/web/index.php'
+    'REQUEST_TIME_FLOAT' => 1497592358.972
+    'REQUEST_TIME' => 1497592358
+]
+2017-06-16 12:52:43 [::1][857][8fnq7c3ippmm83cqkphpcd0405][error][yii\web\HttpException:403] exception 'yii\web\ForbiddenHttpException' with message 'คุณไม่ได้รับอนุญาตให้ดำเนินการนี้' in C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php:96
+Stack trace:
+#0 C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php(81): mdm\admin\components\AccessControl->denyAccess(Object(yii\web\User))
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\base\ActionFilter.php(71): mdm\admin\components\AccessControl->beforeAction(Object(yii\base\InlineAction))
+#2 [internal function]: yii\base\ActionFilter->beforeFilter(Object(yii\base\ActionEvent))
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Component.php(541): call_user_func(Array, Object(yii\base\ActionEvent))
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(606): yii\base\Component->trigger('beforeAction', Object(yii\base\ActionEvent))
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(142): yii\base\Module->beforeAction(Object(yii\base\InlineAction))
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('toolbar', Array)
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('debug/default/t...', Array)
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#9 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#10 {main}
+2017-06-16 12:52:43 [::1][857][8fnq7c3ippmm83cqkphpcd0405][info][application] $_GET = [
+    'r' => 'debug/default/toolbar'
+    'tag' => '5943722b261cb'
+]
+
+$_COOKIE = [
+    '_ga' => 'GA1.1.257055982.1441083126'
+    '_csrf' => '922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3\";}'
+    'PHPSESSID' => '8fnq7c3ippmm83cqkphpcd0405'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 857
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'localhost'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_ACCEPT' => 'text/html'
+    'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+    'HTTP_REFERER' => 'http://localhost/eh/frontend/web/index.php'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, sdch, br'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.8'
+    'HTTP_COOKIE' => '_ga=GA1.1.257055982.1441083126; _csrf=922c480acb35c8c039ea6197acc296222c673ad34cf6eca931e571ee859693cfa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22Iza_nndBrWwjUDfhFgJVBtJZpvYitcc3%22%3B%7D; PHPSESSID=8fnq7c3ippmm83cqkphpcd0405'
+    'PATH' => 'C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\wbem;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin64;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl\\Win64;C:\\Program Files\\Broadcom\\Broadcom 802.11 Network Adapter;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Intel\\WiFi\\bin;C:\\Program Files\\Common Files\\Intel\\WirelessCommon;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x64;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn;C:\\Program Files (x86)\\Common Files\\Ulead Systems\\MPEG;C:\\wamp\\bin\\php\\php5.5.12;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\android-sdk\\tools;C:\\android-sdk\\platform-tools;C:\\Program Files\\PuTTY\\'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => '<address>Apache/2.4.9 (Win64) PHP/5.5.12 Server at localhost Port 80</address>
+'
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win64) PHP/5.5.12'
+    'SERVER_NAME' => 'localhost'
+    'SERVER_ADDR' => '::1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '::1'
+    'DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'SERVER_ADMIN' => 'admin@example.com'
+    'SCRIPT_FILENAME' => 'C:/wamp/www/eh/frontend/web/index.php'
+    'REMOTE_PORT' => '64628'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=debug%2Fdefault%2Ftoolbar&tag=5943722b261cb'
+    'REQUEST_URI' => '/eh/frontend/web/index.php?r=debug%2Fdefault%2Ftoolbar&tag=5943722b261cb'
+    'SCRIPT_NAME' => '/eh/frontend/web/index.php'
+    'PHP_SELF' => '/eh/frontend/web/index.php'
+    'REQUEST_TIME_FLOAT' => 1497592363.736
+    'REQUEST_TIME' => 1497592363
+]

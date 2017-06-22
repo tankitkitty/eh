@@ -235,23 +235,23 @@ try {
 
 
             
-      }else{
-      if($data_notify==null){//isguest
-              $data_notify = (new \yii\db\Query())
-              ->select('n.snt_id,n.hospcode,n.distcode,n.hmain,n.report_id,r.report_name,n.report_group,
-                        SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent ')
-              ->from('sys_Notifications n')
-              ->leftJoin('sys_report r', 'n.report_id=r.report_id')
-              ->where(['active' => 1])
-              //->where($office)
-              //->addParams([':h' => $hospcode])
-              ->groupBy('report_id')
-              ->orderBy(['percent' => SORT_DESC,])
-              ->limit(20)
-              ->all(\Yii::$app->db);
+      }else{//isguest
+      if($data_notify==null){
+        $sql="SELECT 
+            n.snt_id,n.hospcode,n.distcode,n.hmain,r.report_id,r.report_name,r.menu_group,
+            SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent 
+            FROM(
+            SELECT * FROM sys_report 
+
+            )AS r LEFT JOIN(
+            SELECT * FROM sys_Notifications
+            )AS n ON r.report_id=n.report_id
+            GROUP BY r.report_id
+            ORDER BY percent DESC
+            LIMIT 20";
+          $data_notify=\Yii::$app->db->createCommand($sql)->queryAll();               
             }
-             
-              
+                         
 
             }//endif isguest
 
@@ -459,46 +459,46 @@ if(!Yii::$app->user->isGuest){
     if(Yii::$app->user->identity->level==1){
            $hospcode=Yii::$app->user->identity->hospcode;
            $offname='ผู้ดูแล';
-          $s='n.snt_id,n.hospcode,n.distcode,n.hmain,(SUM(y_cases)/SUM(total))*100 AS percent,r.report_id, r.report_name, r.s_table';
-          #$office=' distcode =:h ';
-          $g='report_id';
+           $office=null;
         }else if(Yii::$app->user->identity->level=='02'){
           $hospcode=Yii::$app->user->identity->hospcode;
-          $office=' distcode =:h ';
-          $w=' r.active=1';
-          $s='n.snt_id,n.hospcode,n.distcode,n.hmain,(SUM(y_cases)/SUM(total))*100 AS percent,r.report_id, r.report_name, r.s_table';
-          $g='report_id';
+          $office='where distcode = '.$hospcode;
          }else if(in_array(Yii::$app->user->identity->hospcode, $list_cup, TRUE)&&
           substr(Yii::$app->user->identity->level,0,1)!='h'){ //cup
           $hospcode=Yii::$app->user->identity->hospcode;
-          $s='n.snt_id,n.hospcode,n.distcode,n.hmain,(SUM(y_cases)/SUM(total))*100 AS percent,r.report_id, r.report_name, r.s_table';
-          $office=' hmain =:h ';
-          $w=' r.active=1';
-          $g='report_id';
+          $office='where hmain = '.$hospcode;
         }else if(in_array(Yii::$app->user->identity->hospcode, $list_cup, FALSE)||Yii::$app->user->identity->level!='02'
                   ||Yii::$app->user->identity->level!='01'||Yii::$app->user->identity->level!=1){ //hos
-        $hospcode=Yii::$app->user->identity->hospcode;
-        $s='n.*, r.report_id, r.report_name, r.t_table';
-        $w=' r.active=1';
-        $office=' hospcode =:h';
-        $g='report_id';
+        $hospcode=Yii::$app->user->identity->hospcode;       
+        $office='where hospcode = '.$hospcode;
         }//endif level
-        if(Yii::$app->user->identity->level==1){
-          $w=' r.active=1 AND r.menu_group !='."'qof'";
-        }else{$w=$office.'  AND r.active=1 AND r.menu_group !='."'qof'";}
         
-$data_notify= (new \yii\db\Query())
-              //->select($s)
-          ->select('n.snt_id,n.hospcode,n.distcode,n.hmain,r.report_id,r.report_name,n.report_group,
-                        SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent ')
-              ->from('sys_Notifications n')
-              ->leftJoin('sys_report r', 'n.report_id=r.report_id')
-              ->where($w)
-              ->addParams([':h' => $hospcode])
+        $sql="SELECT 
+              n.snt_id,n.hospcode,n.distcode,n.hmain,r.report_id,r.report_name,r.menu_group,
+              SUM(y_cases) AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent
+              FROM(SELECT * FROM sys_report)AS r
+              LEFT JOIN(
+              SELECT * FROM sys_Notifications
+               ".$office."
+              )AS n 
+              ON r.report_id=n.report_id
+              WHERE r.active=1 AND menu_group !='qof' 
+              GROUP BY r.report_id
+              ORDER BY percent DESC";
+        $data_notify=\Yii::$app->db->createCommand($sql)->queryAll();  
+        
+// $data_notify= (new \yii\db\Query())
+//               //->select($s)
+//           ->select('n.snt_id,n.hospcode,n.distcode,n.hmain,r.report_id,r.report_name,n.report_group,
+//                         SUM(y_cases)AS y_cases, (SUM(y_cases)/SUM(total))*100 AS percent ')
+//               ->from('sys_Notifications n')
+//               ->leftJoin('sys_report r', 'n.report_id=r.report_id')
+//               ->where($w)
+//               ->addParams([':h' => $hospcode])
             
-              ->groupBy($g)
-              ->orderBy(['percent' => SORT_DESC,])
-              ->all(\Yii::$app->db);
+//               ->groupBy($g)
+//               ->orderBy(['percent' => SORT_DESC,])
+//               ->all(\Yii::$app->db);
 
 
         

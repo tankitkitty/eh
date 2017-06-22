@@ -50,7 +50,7 @@ $menu_group_list=ArrayHelper::map($Menugroup,'mucode','muname');
     
      <?= $form->field($model, 'active')
         ->dropDownList(
-            [1=>'เปิดการทำงาน',2=>'ปิดการทำงาน'],           // Flat array ('id'=>'label')
+            [1=>'เปิดการทำงาน',0=>'ปิดการทำงาน'],           // Flat array ('id'=>'label')
             ['prompt'=>'เลือก']    // options
         );?>
 
