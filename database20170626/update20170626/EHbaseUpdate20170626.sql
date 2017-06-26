@@ -2948,12 +2948,12 @@ FROM (SELECT a.HOSPCODE,a.PID,a.DATE_SERV,a.denttype,a.PROVIDER
 	WHERE a.DATE_SERV BETWEEN @start_d AND @end_d) d
 LEFT JOIN (SELECT v.HOSPCODE,v.provider,v.PROVIDERTYPE 
 		FROM hdc.provider v
-		WHERE v.PROVIDERTYPE   IN ('02','06')) c
-ON d.HOSPCODE = c.HOSPCODE AND d.PROVIDER = c.provider
+		WHERE v.PROVIDERTYPE   IN ('02','06')) v
+ON d.HOSPCODE = v.HOSPCODE AND d.PROVIDER = v.provider
 LEFT JOIN hdc.chospital c ON c.hoscode = d.hospcode
 LEFT JOIN hdc.person p ON p.pid = d.pid AND d.hospcode=p.hospcode
 WHERE d.date_serv BETWEEN @start_d AND @end_d  and d.DENTTYPE NOT IN (1,2,3,4,5)  
-AND c.provider IS NULL 
+AND v.provider IS NULL 
 ORDER BY d.hospcode
 );
 #################################
@@ -2996,12 +2996,12 @@ FROM (SELECT a.HOSPCODE,a.PID,a.DATE_SERV,a.denttype,a.PROVIDER
 	WHERE  a.DATE_SERV BETWEEN @start_d AND @end_d) d
 LEFT JOIN (SELECT v.HOSPCODE,v.provider,v.PROVIDERTYPE 
 		FROM hdc.provider v
-		WHERE v.PROVIDERTYPE   IN ('02','06')) c
-ON d.HOSPCODE = c.HOSPCODE AND d.PROVIDER = c.provider
+		WHERE v.PROVIDERTYPE   IN ('02','06')) v
+ON d.HOSPCODE = v.HOSPCODE AND d.PROVIDER = v.provider
 LEFT JOIN hdc.chospital c ON c.hoscode = d.hospcode
 LEFT JOIN hdc.person p ON p.pid = d.pid AND d.hospcode=p.hospcode
 WHERE d.date_serv BETWEEN @start_d AND @end_d 
-AND c.provider IS NULL 
+AND v.provider IS NULL 
 GROUP BY d.hospcode
 ORDER BY d.hospcode
 );
@@ -3031,16 +3031,17 @@ FROM (SELECT a.HOSPCODE,a.PID,a.DATE_SERV,a.denttype,a.PROVIDER
 	WHERE a.DATE_SERV BETWEEN @start_d AND @end_d) d
 LEFT JOIN (SELECT v.HOSPCODE,v.provider,v.PROVIDERTYPE 
 		FROM hdc.provider v
-		WHERE v.PROVIDERTYPE   IN ('02','06')) c
-ON d.HOSPCODE = c.HOSPCODE AND d.PROVIDER = c.provider
+		WHERE v.PROVIDERTYPE   IN ('02','06')) v
+ON d.HOSPCODE = v.HOSPCODE AND d.PROVIDER = v.provider
 LEFT JOIN hdc.chospital c ON c.hoscode = d.hospcode
 LEFT JOIN hdc.person p ON p.pid = d.pid AND d.hospcode=p.hospcode
 LEFT JOIN hdc.campur ca ON ca.ampurcode = c.distcode AND ca.changwatcode=@province 
 WHERE d.date_serv BETWEEN @start_d AND @end_d 
-AND c.provider IS NULL
+AND v.provider IS NULL
 GROUP BY c.distcode
 ORDER BY d.hospcode
 );
+ 
  
 
 ################################################################################
