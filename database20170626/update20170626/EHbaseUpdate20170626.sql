@@ -1,4 +1,4 @@
-/*
+﻿/*
 Navicat MySQL Data Transfer
 
 Source Server         : HDC
@@ -3708,24 +3708,31 @@ bdate varchar(15) NOT NULL DEFAULT '' COMMENT 'วันที่คลอด',
 bhosp varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสสถานพยาบาลที่คลอด',
 vaccineplace varchar(15) NOT NULL DEFAULT '' COMMENT 'สถานที่รับวัคซีน',
 date_serv date COMMENT 'วันที่รับบริการ',
+vaccinetype varchar(3) COMMENT'รหัสวัคซีน',
 diff_date varchar(15) NOT NULL DEFAULT '' COMMENT 'อายุ (วัน)',
-e_hosp varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการที่รับวัคซีน',
 PRIMARY KEY (id)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
 TRUNCATE TABLE epi_bcg_BAbdate_t;
 INSERT INTO epi_bcg_BAbdate_t
 (
-hospcode,hosname,pid,fullname,bdate,bhosp,vaccineplace,date_serv,diff_date,e_hosp
+hospcode,hosname,pid,fullname,bdate,bhosp,vaccineplace,date_serv,vaccinetype,diff_date
 )
 ( 
-select n.hospcode as n_hosp,c.hosname, n.pid, concat(p.`NAME`,' ',p.LNAME)as fullname,n.bdate, n.bhosp, e.vaccineplace, e.date_serv, datediff(e.date_serv,n.bdate) as diff_date, e.hospcode as e_hosp
-from hdc.newborn n
-left join hdc.epi e on e.hospcode=n.hospcode and e.pid=n.pid
-left join hdc.person p on p.hospcode=n.hospcode and p.pid=n.pid
-left outer join hdc.chospital c on c.hoscode=e.HOSPCODE
-where e.date_serv < n.bdate
-AND n.bdate BETWEEN @start_d AND @end_d 
-order by n.hospcode
+SELECT n.hospcode AS n_hosp,c.hosname,n.pid,concat(p.`NAME`, ' ', p.LNAME)AS fullname,n.bdate,n.bhosp,e.vaccineplace,e.date_serv,e.vaccinetype,
+	datediff(e.date_serv, n.bdate)AS diff_date
+FROM
+	hdc.newborn n
+	LEFT JOIN hdc.epi e ON e.hospcode = n.hospcode
+	AND e.pid = n.pid
+	LEFT JOIN hdc.person p ON p.hospcode = n.hospcode
+	AND p.pid = n.pid
+	LEFT OUTER JOIN hdc.chospital c ON c.hoscode = e.HOSPCODE
+WHERE
+	e.date_serv < n.bdate
+	AND n.bdate BETWEEN @start_d
+	AND @end_d
+ORDER BY
+	n.hospcode
 );
 #################################
 #################################
