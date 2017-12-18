@@ -120,10 +120,10 @@ $tasks_noti= (new \yii\db\Query())
   -->
   <style type="text/css">
 .skin-blue .main-header .navbar {
-background-color: #FF6600;
+background-color: #FF0033;
     }
 .skin-blue .main-header .logo {
-background-color: #FF6600;
+background-color: #FF0033;
     }
 
 /*    .black-ribbon {
