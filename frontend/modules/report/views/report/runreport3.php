@@ -39,7 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
-    <br><div class="alert alert-success" role="alert">คำนิยาม:: <?=$defination;?></div>
+      <br><div class="alert alert-success" role="alert">- คำนิยาม:: <?=$defination;?>
+    <br>- ช่วงเวลาประมวลผลของรายงานนี้ :: 
+     <?=$configruntime['s_runtime'].' ถึง '.$configruntime['e_runtime'];?>
+    </div>
 <?php
 $files_g = Json::decode($report_docs);
                               if(empty($files_g)){

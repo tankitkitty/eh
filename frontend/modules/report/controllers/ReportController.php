@@ -570,7 +570,8 @@ if(!Yii::$app->user->isGuest){
               $connection2 = Yii::$app->db;        
            $findreport = SysReport::find()->where(['report_id' => $tableid])->one();
            $reportname=$findreport['report_name'];
-            $defination=$findreport['defination'];    
+            $defination=$findreport['defination'];
+            $menu_group=$findreport['menu_group'];    
             $provincecode=$this->chk_province();
          if (!empty($_GET['ctambon']) ) {
               if(Yii::$app->user->isGuest){
@@ -664,11 +665,23 @@ if(!Yii::$app->user->isGuest){
                   }
            
             }
-            
+        ////////////// showProcedureruntime ////////////////
+        $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_rid = '".$tableid."';";
+        $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = '".$menu_group."';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        }
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = 'root';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        } 
+        /////////////////////////////    
         
       
     
        return $this->render('runreport4',[
+        'configruntime'=>$configruntime,
         'datachart'=>$datachart,
         'data'=>$data,
         // 'rows'=>$rows,
@@ -709,6 +722,7 @@ if(!Yii::$app->user->isGuest){
           $table=$findreport['t_table'];
           $chart=$findreport['s_table'];
           $defination=$findreport['defination']; 
+          $menu_group=$findreport['menu_group'];
           $chartname='hosname';
           $provincecode=$this->chk_province();
            if(in_array(Yii::$app->user->identity->hospcode, $list_cup, FALSE)||Yii::$app->user->identity->level!='02'
@@ -783,8 +797,21 @@ if(!Yii::$app->user->isGuest){
           } catch (ErrorException $e) {
 
           }
+           ////////////// showProcedureruntime ////////////////
+        $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_rid = '".$tableid."';";
+        $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = '".$menu_group."';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        }
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = 'root';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        } 
+        ///////////////////////////// 
 
          return $this->render('runreport3', [
+        'configruntime'=>$configruntime,
           'data'=>$data,
         'rows'=>$rows,
         'columns'=>$columns,
@@ -829,6 +856,7 @@ if(!Yii::$app->user->isGuest){
       $reportname=$findreport['report_name'];
        $chartname='hosname';
       $defination=$findreport['defination'];
+      $menu_group=$findreport['menu_group'];
       $chart=$findreport['s_table'];    
       //$provincecode=$this->chk_province();
          if(!empty($_GET['ctambon'])){
@@ -914,8 +942,21 @@ if(!Yii::$app->user->isGuest){
           } catch (ErrorException $e) {
 
           }
+           ////////////// showProcedureruntime ////////////////
+        $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_rid = '".$tableid."';";
+        $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = '".$menu_group."';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        }
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = 'root';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        } 
+        ///////////////////////////// 
     
        return $this->render('runreport2',[
+        'configruntime'=>$configruntime,
         'datachart'=>$datachart,
         'data'=>$data,
         // 'rows'=>$rows,
@@ -963,7 +1004,8 @@ if(!Yii::$app->user->isGuest){
       $report_docs=$findreport['docs'];
       $report_ref=$findreport['ref'];
       $reportname=$findreport['report_name'];
-      $defination=$findreport['defination'];    
+      $defination=$findreport['defination']; 
+      $menu_group=$findreport['menu_group'];   
       $provincecode=$this->chk_province();
       if(empty($_GET['campur'])&& empty($_GET['ctambon'])){
         $aum='ยังไม่เลือกทั้งสอง';
@@ -1118,9 +1160,23 @@ if(!Yii::$app->user->isGuest){
           } catch (ErrorException $e) {
 
           }
+
+           ////////////// showProcedureruntime ////////////////
+        $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_rid = '".$tableid."';";
+        $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = '".$menu_group."';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        }
+        if($configruntime==FALSE){
+          $sqlruntime="SELECT * FROM sys_config_runtime WHERE run_gid = 'root';";
+          $configruntime=Yii::$app->db->createCommand($sqlruntime)->queryOne();
+        } 
+        ///////////////////////////// 
     
        return $this->render('runreport',[
        # 'test_r'=>$test_r,
+        'configruntime'=>$configruntime,
         'data'=>$data,
         'rows'=>$rows,
         'columns'=>$columns,

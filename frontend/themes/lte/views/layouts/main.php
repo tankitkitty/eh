@@ -120,13 +120,13 @@ $tasks_noti= (new \yii\db\Query())
   -->
   <style type="text/css">
 .skin-blue .main-header .navbar {
-background-color: #5F5F5F;
+background-color: #FF6600;
     }
 .skin-blue .main-header .logo {
-background-color: #5F5F5F;
+background-color: #FF6600;
     }
 
-    .black-ribbon {
+/*    .black-ribbon {
   position: fixed;
   z-index: 9999;
   width: 70px;
@@ -140,13 +140,12 @@ background-color: #5F5F5F;
 .stick-left { left: 0; }
 .stick-right { right: 0; }
 .stick-top { top: 0; }
-.stick-bottom { bottom: 0; }
+.stick-bottom { bottom: 0; }*/
 
   </style>
   <body class="skin-blue sidebar-mini">
 
-<!-- <img src="/eh/frontend/themes/img/black_ribbons/black_ribbon_bottom_left.png" class="black-ribbon stick-bottom stick-left"/> -->
-<img src="/eh/frontend/themes/img/black_ribbons/black_ribbon_bottom_right.png" class="black-ribbon stick-bottom stick-right"/>
+
     <div class="wrapper">
 
       <!-- Main Header -->
@@ -350,7 +349,7 @@ background-color: #5F5F5F;
                 
               if(Yii::$app->user->identity->level==1&&Yii::$app->user->identity->hospcode=='1111'){ ?>
              
-            <li class=" treeview">
+            <li class=" treeview" >
             <a href="<?=\Yii::$app->urlManagerBackend->getBaseUrl();?>">
                 <i class="fa fa-dashboard"></i> <span>ตั้งค่า</span> <i class="fa fa-angle-left pull-right"></i>
               </a>

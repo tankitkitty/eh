@@ -15,8 +15,8 @@ a:hover   {color:#FFF; background-color:transparent; text-decoration:none}
 /*a:active  {color:yellow; background-color:transparent; text-decoration:none}*/
 
 </style>
-<div class="box box-solid bg-black-gradient">
-  <div class="box-header ui-sortable-handle" style="cursor: move;">
+<div class="box box-solid bg-blue-gradient" >
+  <div class="box-header ui-sortable-handle" style="background-color: #FF6600;">
                   <i class="fa fa-bookmark"></i>
                   <h3 class="box-title">10 อันดับติดตาม</h3>
                   <!-- tools box -->

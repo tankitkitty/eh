@@ -19,7 +19,7 @@ use kartik\helpers\Html;
 
 
 
-
+#var_dump($configruntime);
 //var_dump($percent);
 //var_dump($datachart);
 // use frontend\themes\lte\assets\LteAsset;
@@ -99,7 +99,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ActiveForm::end();
     ?>
-    <br><div class="alert alert-success" role="alert">คำนิยาม:: <?=$defination;?></div>
+    <br><div class="alert alert-success" role="alert">- คำนิยาม:: <?=$defination;?>
+    <br>- ช่วงเวลาประมวลผลของรายงานนี้ :: 
+     <?=$configruntime['s_runtime'].' ถึง '.$configruntime['e_runtime'];?>
+    </div>
 <?php
   
 

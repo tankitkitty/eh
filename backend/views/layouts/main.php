@@ -12,23 +12,7 @@ use common\widgets\Alert;
 
 AppAsset::register($this);
 ?>
-<style type="text/css">
-    .black-ribbon {
-  position: fixed;
-  z-index: 9999;
-  width: 70px;
-}
-@media only all and (min-width: 768px) {
-  .black-ribbon {
-    width: auto;
-  }
-}
 
-.stick-left { left: 0; }
-.stick-right { right: 0; }
-.stick-top { top: 0; }
-.stick-bottom { bottom: 0; }
-</style>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -42,7 +26,6 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<img src="/eh/frontend/themes/img/black_ribbons/black_ribbon_top_left.png" class="black-ribbon stick-top stick-left"/>
 
 <div class="wrap">
     <?php

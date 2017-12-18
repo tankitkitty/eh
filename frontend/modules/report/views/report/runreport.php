@@ -123,7 +123,10 @@ $files_g = Json::decode($report_docs);
 
 
 </div> <!-- class="row" -->
-    <br><div class="alert alert-success" role="alert">คำนิยาม:: <?=$defination;?></div>
+       <br><div class="alert alert-success" role="alert">- คำนิยาม:: <?=$defination;?>
+    <br>- ช่วงเวลาประมวลผลของรายงานนี้ :: 
+     <?=$configruntime['s_runtime'].' ถึง '.$configruntime['e_runtime'];?>
+    </div>
 <?php
   
 
@@ -168,7 +171,7 @@ echo '<h2>รายงาน::'.$reportname.'</h2>';
 
 
 <div class="panel panel-primary">
-    <div class="panel-heading"><h3><div class="fa fa-folder-open-o"></div> 
+    <div class="panel-heading"><h3><div class="glyphicon glyphicon-stats"></div> 
 
 
   </h3>   </div>
