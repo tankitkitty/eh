@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50615
 File Encoding         : 65001
 
-Date: 2017-12-19 09:54:39
+Date: 2017-12-19 10:57:27
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1581,7 +1581,7 @@ DELIMITER ;
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `anc_labor_sexage_invalid`;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `anc_labor_sexage_invalid`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+CREATE DEFINER=`varit`@`%` PROCEDURE `anc_labor_sexage_invalid`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
 BEGIN 
 IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
 set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
@@ -1601,35 +1601,37 @@ id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
 hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
 hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
 pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
-cid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'รหัสประจำตัวบุคคล',
 fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
-sex VARCHAR(120) NOT NULL DEFAULT '' COMMENT 'เพศ',
+sex VARCHAR(1) NOT NULL DEFAULT '' COMMENT 'เพศ',
 birth date COMMENT 'วันเกิด',
-age_anc varchar(5) NOT NULL DEFAULT '' COMMENT 'อายุ ณ วันที่รับบริการฝากครรภ์',
-total_anc varchar(5) NOT NULL DEFAULT '' COMMENT 'จำนวน ญ ที่ฝากครรภ์',
+nation VARCHAR(3) NOT NULL DEFAULT '' COMMENT 'สัญชาติ',
+anc_date date COMMENT 'วันรับบริการ',
+age_anc varchar(3) NOT NULL DEFAULT '' COMMENT 'อายุ ณ วันที่รับบริการ ANC',
+bdate date COMMENT 'วันคลอด',
+age_labor varchar(3) NOT NULL DEFAULT '' COMMENT 'อายุ ณ วันคลอด',
 PRIMARY KEY (id)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 TRUNCATE TABLE anc_labor_sexage_invalid_t;
 INSERT INTO anc_labor_sexage_invalid_t
 (
-hospcode,hosname,pid,cid,fullname,sex,birth,age_anc,total_anc
+hospcode,hosname,pid,fullname,sex,birth,nation,anc_date,age_anc,bdate,age_labor
 )
 
 ( 
-select a.hospcode, h.hosname, p.pid, concat(left(p.cid,9),'xxxxx') as cid, 
-concat(p.name,' ',p.lname)as fullname, p.sex, p.birth, 
-timestampdiff(year,p.birth,a.date_Serv) as age_anc,
- count(a.pid)as total_anc 
+select a.hospcode, h.hosname, p.pid, concat(p.name,' ',p.lname)as fullname,
+p.sex, p.birth, p.nation, min(a.date_serv) as anc_date, 
+timestampdiff(year,p.birth,max(a.date_Serv)) as age_anc, l.bdate,
+timestampdiff(year,p.birth,l.bdate) as age_labor 
 from hdc.anc a
 left join hdc.person p on p.hospcode=a.hospcode and a.pid=p.pid 
 left join hdc.labor l on l.hospcode=p.hospcode and l.pid=p.pid
 left join hdc.chospital h on h.hoscode=a.hospcode 
-where (a.date_Serv >'2016-12-31' or  l.bdate between @start_d and @end_d ) 
-and (p.sex='1'  or ( timestampdiff(year,p.birth,a.date_Serv) <11 and sex='2' ) 
- or ( timestampdiff(year,p.birth,a.date_Serv) >55 and sex='2' ) )
-group by a.hospcode,a.pid
-order by a.hospcode,p.sex,a.date_serv desc
+where p.nation='099' and (a.date_Serv > '2016-12-31' or  l.bdate between @start_d and @end_d ) 
+and ( p.sex='1'  or ( timestampdiff(year,p.birth,a.date_serv) <11 and sex='2' )  
+or ( timestampdiff(year,p.birth,a.date_Serv) >55 and sex='2' ) )
+group by a.hospcode,a.pid,a.date_serv
+order by a.hospcode,p.sex,l.bdate desc 
 );
 
 #################################
@@ -1665,7 +1667,7 @@ FROM
 	 left join hdc.person p on p.hospcode=a.hospcode and a.pid=p.pid 
 	 left join hdc.labor l on l.hospcode=p.hospcode and l.pid=p.pid
 	 left join hdc.chospital h on h.hoscode=a.hospcode 
-	 where (a.date_Serv >'2016-12-31' or  l.bdate between @start_d and @end_d ) 
+	 where p.nation='099' and (a.date_Serv > '2016-12-31' or  l.bdate between @start_d and @end_d )  
 	 group by a.hospcode
 	 order by a.hospcode,p.sex,a.date_serv desc) nd
 
@@ -1676,8 +1678,8 @@ LEFT JOIN
 	 left join hdc.person p on p.hospcode=a.hospcode and a.pid=p.pid 
 	 left join hdc.labor l on l.hospcode=p.hospcode and l.pid=p.pid
 	 left join hdc.chospital h on h.hoscode=a.hospcode 
-	 where (a.date_Serv >'2016-12-31' or  l.bdate between @start_d and @end_d ) 
-	 and (p.sex='1'  or ( timestampdiff(year,p.birth,a.date_Serv) <11 and sex='2' ) 
+	 where p.nation='099' and (a.date_Serv > '2016-12-31' or  l.bdate between @start_d and @end_d ) 
+	 and ( p.sex='1'  or ( timestampdiff(year,p.birth,a.date_serv) <11 and sex='2' )  
 	 or ( timestampdiff(year,p.birth,a.date_Serv) >55 and sex='2' ) )
 	 group by a.hospcode
 	 order by a.hospcode,p.sex,a.date_serv desc)as st
@@ -1721,7 +1723,7 @@ FROM
 	 left join hdc.labor l on l.hospcode=p.hospcode and l.pid=p.pid
 	 left join hdc.chospital h on h.hoscode=a.hospcode 
 	 join hdc.campur ca on ca.ampurcode = h.distcode and ca.changwatcode=@province
-	 where (a.date_Serv >'2016-12-31' or  l.bdate between @start_d and @end_d ) 
+	 where p.nation='099' and (a.date_Serv > '2016-12-31' or  l.bdate between @start_d and @end_d ) 
 	 group by h.distcode) nd
 
 left JOIN 
@@ -1731,8 +1733,8 @@ left JOIN
 	 left join hdc.person p on p.hospcode=a.hospcode and a.pid=p.pid 
 	 left join hdc.labor l on l.hospcode=p.hospcode and l.pid=p.pid
 	 left join hdc.chospital h on h.hoscode=a.hospcode 
-	 where (a.date_Serv >'2016-12-31' or  l.bdate between @start_d and @end_d ) 
-	 and (p.sex='1'  or ( timestampdiff(year,p.birth,a.date_Serv) <11 and sex='2' ) 
+	 where p.nation='099' and (a.date_Serv > '2016-12-31' or  l.bdate between @start_d and @end_d ) 
+	 and ( p.sex='1' or ( timestampdiff(year,p.birth,a.date_serv) <11 and sex='2' )  
 	 or ( timestampdiff(year,p.birth,a.date_Serv) >55 and sex='2' ) )
 	 group by h.distcode
 )as st 
