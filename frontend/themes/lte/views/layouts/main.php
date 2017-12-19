@@ -185,8 +185,8 @@ background-color: #FF0033;
               <!-- Notifications: style can be found in dropdown.less -->
                  <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i  class="fa fa-exclamation fa-lg"></i>
-                   <?php if(isset($tasks_noti)){?><span  class="label label-danger"><?=count($tasks_noti);?></span><?php } ?>
+                  <i   class="fa fa-exclamation fa-lg"></i>
+                   <?php if(isset($tasks_noti)){?><span  class="label label-primary"><?=count($tasks_noti);?></span><?php } ?>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">คุณมีการแจ้งเตือน <?=count($tasks_noti);?> รายการ</li>
