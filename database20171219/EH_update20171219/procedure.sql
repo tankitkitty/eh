@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50615
 File Encoding         : 65001
 
-Date: 2017-12-18 21:17:27
+Date: 2017-12-19 09:40:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -228,7 +228,7 @@ HOSPCODE,hosname,pid,date_serv,sbp,dbp,waist_cm
 )
 
 ( 
-select h.hospcode, h.hosname, c.pid, c.date_serv, c.sbp, c.dbp, c.waist_cm  
+select hospcode, h.hosname, c.pid, c.date_serv, c.sbp, c.dbp, c.waist_cm  
 from hdc.chronicfu c
 left join hdc.chospital h on h.hoscode=c.hospcode
 where c.date_serv between @start_d and @end_d and c.sbp<>'0' 
@@ -867,8 +867,8 @@ hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบ�
 hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
 pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
 fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
-sex VARCHAR(6) NOT NULL DEFAULT '' COMMENT 'เพศ',
-bdate date COMMENT 'วันคลอด',
+sex VARCHAR(120) NOT NULL DEFAULT '' COMMENT 'เพศ',
+bdate date COMMENT 'วันที่คลอด',
 bweight varchar(5) NOT NULL DEFAULT '' COMMENT 'น้ำหนักแรกเกิด',
 asphyxia varchar(5) NOT NULL DEFAULT '' COMMENT 'สภาวการณ์ขาดออกซิเจน',
 bhosp varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสสถานพยาบาลที่คลอด',
@@ -878,12 +878,12 @@ PRIMARY KEY (id)
 TRUNCATE TABLE newborn_asphyxia_t;
 INSERT INTO newborn_asphyxia_t
 (
-HOSPCODE,hosname,pid,fullname,sex,bdate,bweight,asphyxia,bhosp
+HOSPCODE,hosname,PID,fullname,sex,bdate,bweight,asphyxia,bhosp
 )
 
 ( 
-select n.hospcode, h.hosname, n.pid, CONCAT(p.name,' ',p.lname)as fullname, p.sex, 
-n.bdate, n.bweight, n.asphyxia, n.bhosp 
+select n.hospcode, hosname, n.pid, CONCAT(p.name,' ',p.lname)as fullname, p.sex, 
+n.bdate, n.bweight, asphyxia, n.bhosp 
 from hdc.newborn n
 left join hdc.person p on p.pid=n.pid and p.hospcode=n.hospcode
 left join hdc.chospital  h on h.hoscode=n.HOSPCODE
@@ -923,19 +923,20 @@ round((IFNULL(st.y_cases,0)/pid)*100,2) as percent
 
 FROM
 
-(SELECT hospcode,count(pid) as pid 
-from hdc.newborn 
-where bdate BETWEEN @start_d AND @end_d GROUP BY HOSPCODE) nd
+	(SELECT hospcode,count(pid) as pid 
+	from hdc.newborn n	
+	where n.bdate between @start_d and @end_d
+	GROUP BY HOSPCODE) nd
 
 LEFT JOIN
 
-(select n.hospcode,count(n.pid) as y_cases
-from hdc.newborn n
- where n.bdate between @start_d and @end_d  
-and n.hospcode=n.bhosp and n.btype<> 6 
-and n.bplace in (1,2 ) and n.bdoctor in (1,2,3) 
-and n.bweight >2500 and (n. asphyxia <3 or n.asphyxia ='99')
-group by n.hospcode)as st
+	(select n.hospcode,count(n.pid) as y_cases
+	from hdc.newborn n
+	where n.bdate between @start_d and @end_d  
+	and n.hospcode=n.bhosp and n.btype<> 6 
+	and n.bplace in (1,2 ) and n.bdoctor in (1,2,3) 
+	and n.bweight >2500 and (n. asphyxia <3 or n.asphyxia ='99') 
+	group by n.hospcode)as st
 
 on nd.hospcode=st.hospcode
 left outer join hdc.chospital c on c.hoscode=nd.HOSPCODE
@@ -969,23 +970,24 @@ round((IFNULL(st.y_cases,0) /pid)*100,2) as percent
 
 FROM
 
-  (SELECT c.distcode,ca.ampurname,count(n.pid) as pid FROM hdc.newborn n
-  join hdc.chospital c on c.hoscode=n.HOSPCODE
-  join hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province
-  where n.bdate BETWEEN @start_d AND @end_d
-  GROUP BY c.distcode) nd
+	(SELECT c.distcode,ca.ampurname,count(n.pid) as pid 
+	FROM hdc.newborn n
+	join hdc.chospital c on c.hoscode=n.HOSPCODE
+	join hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province
+	where n.bdate BETWEEN @start_d AND @end_d  
+	GROUP BY c.distcode) nd
 
 left JOIN 
 
-  (select c.distcode,count(n.pid) as y_cases
-  from hdc.newborn n
-  join hdc.chospital c on c.hoscode=n.HOSPCODE
-  where n.bdate between @start_d and @end_d  
-  and n.hospcode=n.bhosp and n.btype<> 6 
-  and n.bplace in (1,2 ) and n.bdoctor in (1,2,3) 
-  and n.bweight >2500 and (n. asphyxia <3 or n.asphyxia ='99')
-  group by c.distcode
-  )as st 
+	(select c.distcode,count(n.pid) as y_cases
+	from hdc.newborn n
+	join hdc.chospital c on c.hoscode=n.HOSPCODE
+	where n.bdate between @start_d and @end_d 
+	and n.hospcode=n.bhosp and n.btype<> 6 
+	and n.bplace in (1,2 ) and n.bdoctor in (1,2,3) 
+	and n.bweight >2500 and (n. asphyxia <3 or n.asphyxia ='99')
+	group by c.distcode
+	)as st 
 
 on nd.distcode=st.distcode
 order by st.y_cases desc

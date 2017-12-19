@@ -305,7 +305,7 @@ background-color: #FF0033;
   AND table_name = 'sys_Notifications';";
         $process_sys_notify=\Yii::$app->db->createCommand($sql)->queryOne(); 
         ?>
-        <strong>Copyright &copy; V1.20170626 <a style="color:black;" href="#">เขตสุขภาพที่ 5</a>. 
+        <strong>Copyright &copy; V1.20171219 <a style="color:black;" href="#">เขตสุขภาพที่ 5</a>. 
           ประมวลผลเมื่อ <?=$process_sys_notify['create_time'];?></strong>.
       </footer>
 

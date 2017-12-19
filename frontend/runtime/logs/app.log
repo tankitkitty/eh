@@ -6636,3 +6636,196 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1513606858.253
     'REQUEST_TIME' => 1513606858
 ]
+2017-12-18 22:28:37 [::1][-][7thla3dhjse5bnihhdqcqj0655][error][yii\db\Exception] exception 'PDOException' with message 'SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+' in C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php:600
+Stack trace:
+#0 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(600): PDO->__construct('mysql:host=loca...', 'root', '', NULL)
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(542): yii\db\Connection->createPdoInstance()
+#2 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(656): yii\db\Connection->open()
+#3 C:\wamp\www\eh\frontend\modules\report\controllers\ReportController.php(118): yii\db\Connection->beginTransaction()
+#4 [internal function]: frontend\modules\report\controllers\ReportController->actionIndex()
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\base\InlineAction.php(55): call_user_func_array('[<span class="t...', '[]')
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(154): yii\base\InlineAction->runWithParams('[]')
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('<span class="st...', '[]')
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('<span class="st...', '[]')
+#9 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#10 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#11 {main}
+
+Next exception 'yii\db\Exception' with message 'SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+' in C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php:547
+Stack trace:
+#0 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(656): yii\db\Connection->open()
+#1 C:\wamp\www\eh\frontend\modules\report\controllers\ReportController.php(118): yii\db\Connection->beginTransaction()
+#2 [internal function]: frontend\modules\report\controllers\ReportController->actionIndex()
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\base\InlineAction.php(55): call_user_func_array('[<span class="t...', '[]')
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(154): yii\base\InlineAction->runWithParams('[]')
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('<span class="st...', '[]')
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('<span class="st...', '[]')
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#8 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#9 {main}
+Additional Information:
+
+2017-12-18 22:28:35 [::1][-][7thla3dhjse5bnihhdqcqj0655][info][application] $_COOKIE = [
+    '_ga' => 'GA1.1.257055982.1441083126'
+    'PHPSESSID' => '7thla3dhjse5bnihhdqcqj0655'
+    '_csrf' => '48eedbe9e85efb676871a3cde6cc680c5e507bf0eeaab96c5f2158ff9ab70f9aa:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"4sVAYA_ALOYc0xSO1I9T5MnaGME-MCTb\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__returnUrl' => '/eh/backend/web/index.php'
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'localhost'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
+    'HTTP_REFERER' => 'http://localhost/eh/'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, br'
+    'HTTP_ACCEPT_LANGUAGE' => 'th-TH,th;q=0.9'
+    'HTTP_COOKIE' => '_ga=GA1.1.257055982.1441083126; PHPSESSID=7thla3dhjse5bnihhdqcqj0655; _csrf=48eedbe9e85efb676871a3cde6cc680c5e507bf0eeaab96c5f2158ff9ab70f9aa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%224sVAYA_ALOYc0xSO1I9T5MnaGME-MCTb%22%3B%7D'
+    'PATH' => 'C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\wbem;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin64;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl\\Win64;C:\\Program Files\\Broadcom\\Broadcom 802.11 Network Adapter;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Intel\\WiFi\\bin;C:\\Program Files\\Common Files\\Intel\\WirelessCommon;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x64;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn;C:\\Program Files (x86)\\Common Files\\Ulead Systems\\MPEG;C:\\wamp\\bin\\php\\php5.5.12;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\android-sdk\\tools;C:\\android-sdk\\platform-tools;C:\\Program Files\\PuTTY\\;C:\\Program Files\\VDownloader;C:\\Program Files (x86)\\Bitvise SSH Client;'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => '<address>Apache/2.4.9 (Win64) PHP/5.5.12 Server at localhost Port 80</address>
+'
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win64) PHP/5.5.12'
+    'SERVER_NAME' => 'localhost'
+    'SERVER_ADDR' => '::1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '::1'
+    'DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'SERVER_ADMIN' => 'admin@example.com'
+    'SCRIPT_FILENAME' => 'C:/wamp/www/eh/frontend/web/index.php'
+    'REMOTE_PORT' => '55834'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => ''
+    'REQUEST_URI' => '/eh/frontend/web/index.php'
+    'SCRIPT_NAME' => '/eh/frontend/web/index.php'
+    'PHP_SELF' => '/eh/frontend/web/index.php'
+    'REQUEST_TIME_FLOAT' => 1513610915.378
+    'REQUEST_TIME' => 1513610915
+]
+2017-12-18 22:28:39 [::1][-][7thla3dhjse5bnihhdqcqj0655][error][yii\db\Exception] exception 'PDOException' with message 'SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+' in C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php:600
+Stack trace:
+#0 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(600): PDO->__construct('mysql:host=loca...', 'root', '', NULL)
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(542): yii\db\Connection->createPdoInstance()
+#2 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(858): yii\db\Connection->open()
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(845): yii\db\Connection->getMasterPdo()
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Schema.php(477): yii\db\Connection->getSlavePdo()
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(754): yii\db\Schema->quoteValue('/debug/default/...')
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(175): yii\db\Connection->quoteValue('/debug/default/...')
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(809): yii\db\Command->getRawSql()
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(376): yii\db\Command->queryInternal('fetch', NULL)
+#9 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Query.php(247): yii\db\Command->queryOne()
+#10 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(229): yii\db\Query->one(Object(yii\db\Connection))
+#11 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(186): yii\rbac\DbManager->getItem('/debug/default/...')
+#12 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(126): yii\rbac\DbManager->checkAccessRecursive(NULL, '/debug/default/...', Array, Array)
+#13 C:\wamp\www\eh\vendor\yiisoft\yii2\web\User.php(663): yii\rbac\DbManager->checkAccess(NULL, '/debug/default/...', Array)
+#14 C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php(71): yii\web\User->can('/debug/default/...')
+#15 C:\wamp\www\eh\vendor\yiisoft\yii2\base\ActionFilter.php(71): mdm\admin\components\AccessControl->beforeAction(Object(yii\base\InlineAction))
+#16 [internal function]: yii\base\ActionFilter->beforeFilter(Object(yii\base\ActionEvent))
+#17 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Component.php(541): call_user_func(Array, Object(yii\base\ActionEvent))
+#18 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(606): yii\base\Component->trigger('beforeAction', Object(yii\base\ActionEvent))
+#19 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(142): yii\base\Module->beforeAction(Object(yii\base\InlineAction))
+#20 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('toolbar', Array)
+#21 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('debug/default/t...', Array)
+#22 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#23 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#24 {main}
+
+Next exception 'yii\db\Exception' with message 'SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+' in C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php:547
+Stack trace:
+#0 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(858): yii\db\Connection->open()
+#1 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(845): yii\db\Connection->getMasterPdo()
+#2 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Schema.php(477): yii\db\Connection->getSlavePdo()
+#3 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Connection.php(754): yii\db\Schema->quoteValue('/debug/default/...')
+#4 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(175): yii\db\Connection->quoteValue('/debug/default/...')
+#5 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(809): yii\db\Command->getRawSql()
+#6 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Command.php(376): yii\db\Command->queryInternal('fetch', NULL)
+#7 C:\wamp\www\eh\vendor\yiisoft\yii2\db\Query.php(247): yii\db\Command->queryOne()
+#8 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(229): yii\db\Query->one(Object(yii\db\Connection))
+#9 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(186): yii\rbac\DbManager->getItem('/debug/default/...')
+#10 C:\wamp\www\eh\vendor\yiisoft\yii2\rbac\DbManager.php(126): yii\rbac\DbManager->checkAccessRecursive(NULL, '/debug/default/...', Array, Array)
+#11 C:\wamp\www\eh\vendor\yiisoft\yii2\web\User.php(663): yii\rbac\DbManager->checkAccess(NULL, '/debug/default/...', Array)
+#12 C:\wamp\www\eh\vendor\mdmsoft\yii2-admin\components\AccessControl.php(71): yii\web\User->can('/debug/default/...')
+#13 C:\wamp\www\eh\vendor\yiisoft\yii2\base\ActionFilter.php(71): mdm\admin\components\AccessControl->beforeAction(Object(yii\base\InlineAction))
+#14 [internal function]: yii\base\ActionFilter->beforeFilter(Object(yii\base\ActionEvent))
+#15 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Component.php(541): call_user_func(Array, Object(yii\base\ActionEvent))
+#16 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(606): yii\base\Component->trigger('beforeAction', Object(yii\base\ActionEvent))
+#17 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Controller.php(142): yii\base\Module->beforeAction(Object(yii\base\InlineAction))
+#18 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Module.php(454): yii\base\Controller->runAction('toolbar', Array)
+#19 C:\wamp\www\eh\vendor\yiisoft\yii2\web\Application.php(84): yii\base\Module->runAction('debug/default/t...', Array)
+#20 C:\wamp\www\eh\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#21 C:\wamp\www\eh\frontend\web\index.php(18): yii\base\Application->run()
+#22 {main}
+Additional Information:
+
+2017-12-18 22:28:37 [::1][-][7thla3dhjse5bnihhdqcqj0655][info][application] $_GET = [
+    'r' => 'debug/default/toolbar'
+    'tag' => '5a37dea36cd13'
+]
+
+$_COOKIE = [
+    '_ga' => 'GA1.1.257055982.1441083126'
+    'PHPSESSID' => '7thla3dhjse5bnihhdqcqj0655'
+    '_csrf' => '48eedbe9e85efb676871a3cde6cc680c5e507bf0eeaab96c5f2158ff9ab70f9aa:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"4sVAYA_ALOYc0xSO1I9T5MnaGME-MCTb\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__returnUrl' => '/eh/backend/web/index.php'
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'localhost'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_ACCEPT' => 'text/html'
+    'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
+    'HTTP_REFERER' => 'http://localhost/eh/frontend/web/index.php'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, br'
+    'HTTP_ACCEPT_LANGUAGE' => 'th-TH,th;q=0.9'
+    'HTTP_COOKIE' => '_ga=GA1.1.257055982.1441083126; PHPSESSID=7thla3dhjse5bnihhdqcqj0655; _csrf=48eedbe9e85efb676871a3cde6cc680c5e507bf0eeaab96c5f2158ff9ab70f9aa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%224sVAYA_ALOYc0xSO1I9T5MnaGME-MCTb%22%3B%7D'
+    'PATH' => 'C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\wbem;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl;C:\\Program Files (x86)\\Embarcadero\\Studio\\14.0\\bin64;C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\14.0\\Bpl\\Win64;C:\\Program Files\\Broadcom\\Broadcom 802.11 Network Adapter;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Intel\\WiFi\\bin;C:\\Program Files\\Common Files\\Intel\\WirelessCommon;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\2.0\\bin\\x64;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn;C:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn;C:\\Program Files (x86)\\Common Files\\Ulead Systems\\MPEG;C:\\wamp\\bin\\php\\php5.5.12;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\android-sdk\\tools;C:\\android-sdk\\platform-tools;C:\\Program Files\\PuTTY\\;C:\\Program Files\\VDownloader;C:\\Program Files (x86)\\Bitvise SSH Client;'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => '<address>Apache/2.4.9 (Win64) PHP/5.5.12 Server at localhost Port 80</address>
+'
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win64) PHP/5.5.12'
+    'SERVER_NAME' => 'localhost'
+    'SERVER_ADDR' => '::1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '::1'
+    'DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'C:/wamp/www/'
+    'SERVER_ADMIN' => 'admin@example.com'
+    'SCRIPT_FILENAME' => 'C:/wamp/www/eh/frontend/web/index.php'
+    'REMOTE_PORT' => '55837'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=debug%2Fdefault%2Ftoolbar&tag=5a37dea36cd13'
+    'REQUEST_URI' => '/eh/frontend/web/index.php?r=debug%2Fdefault%2Ftoolbar&tag=5a37dea36cd13'
+    'SCRIPT_NAME' => '/eh/frontend/web/index.php'
+    'PHP_SELF' => '/eh/frontend/web/index.php'
+    'REQUEST_TIME_FLOAT' => 1513610917.745
+    'REQUEST_TIME' => 1513610917
+]
