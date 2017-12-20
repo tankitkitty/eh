@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50615
 File Encoding         : 65001
 
-Date: 2017-12-19 10:57:04
+Date: 2017-12-20 10:46:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -39,7 +39,7 @@ id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
 hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
 hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
 pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
-fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
+name varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ',
 sex VARCHAR(1) NOT NULL DEFAULT '' COMMENT 'เพศ',
 birth date COMMENT 'วันเกิด',
 nation VARCHAR(3) NOT NULL DEFAULT '' COMMENT 'สัญชาติ',
@@ -53,11 +53,11 @@ PRIMARY KEY (id)
 TRUNCATE TABLE anc_labor_sexage_invalid_t;
 INSERT INTO anc_labor_sexage_invalid_t
 (
-hospcode,hosname,pid,fullname,sex,birth,nation,anc_date,age_anc,bdate,age_labor
+hospcode,hosname,pid,name,sex,birth,nation,anc_date,age_anc,bdate,age_labor
 )
 
 ( 
-select a.hospcode, h.hosname, p.pid, concat(p.name,' ',p.lname)as fullname,
+select a.hospcode, h.hosname, p.pid, p.name as name,
 p.sex, p.birth, p.nation, min(a.date_serv) as anc_date, 
 timestampdiff(year,p.birth,max(a.date_Serv)) as age_anc, l.bdate,
 timestampdiff(year,p.birth,l.bdate) as age_labor 
@@ -193,6 +193,172 @@ END
 DELIMITER ;
 
 -- ----------------------------
+-- Procedure structure for `charge_opd_chargeitem`
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `charge_opd_chargeitem`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `charge_opd_chargeitem`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+BEGIN 
+IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
+set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
+set @end_d := e_runtime;
+ELSE 
+UPDATE sys_log
+SET log_status='conf_runtime_err'
+WHERE procedure_name=procedure_name ;
+END IF;
+
+SET @province:=(SELECT province_config FROM sys_config LIMIT 1);
+###########################################################################################################################################
+DROP TABLE IF EXISTS charge_opd_chargeitem_t;
+CREATE TABLE charge_opd_chargeitem_t (
+id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
+hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
+pid varchar(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
+fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
+date_serv date COMMENT 'วันที่รับบริการ',
+chargeitem varchar(15) NOT NULL DEFAULT '' COMMENT 'หมวดของค่าบริการ',
+chargelist varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสรายการค่าบริการ',
+instype varchar(15) NOT NULL DEFAULT '' COMMENT 'สิทธิการรักษาที่เบิก',
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE charge_opd_chargeitem_t;
+
+INSERT INTO charge_opd_chargeitem_t
+(
+hospcode,hosname,pid,fullname,date_serv,chargeitem,CHARGELIST,INSTYPE
+)
+
+( 
+select s.hospcode, h.hosname, s.pid,concat(p.`NAME`,' ',p.LNAME)as fullname, s.date_serv, s.chargeitem ,s.CHARGELIST, s.INSTYPE
+, s.date_serv, s.cost, s.price
+from hdc.charge_opd s
+LEFT JOIN hdc.cchargeitem i on i.id_chargeitem=s.CHARGEITEM
+join hdc.person p on p.hospcode=s.hospcode and p.pid=s.pid
+join hdc.chospital h on h.hoscode=s.hospcode
+where s.chargeitem not in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18')
+and s.date_serv BETWEEN @start_d AND @end_d
+order by h.hoscode, p.pid, s.date_serv
+);
+
+
+
+
+#################################
+
+
+#################################
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS charge_opd_chargeitem_s;
+CREATE TABLE charge_opd_chargeitem_s (
+id int(15) NOT NULL AUTO_INCREMENT,
+hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
+distcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสอำเภอ',
+total_pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'จำนวนทั้งหมด',
+y_cases VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'จำนวน เอ๊ะ',
+percent VARCHAR(5) NOT NULl DEFAULT '' COMMENT 'ร้อยละ เอ๊ะ',
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE charge_opd_chargeitem_s;
+
+INSERT INTO charge_opd_chargeitem_s
+(
+hospcode,hosname,distcode,total_pid,y_cases,percent
+)
+
+( 
+SELECT nd.hospcode,h.hosname,concat(@province,h.distcode) as distcode,nd.pid,
+IFNULL(st.y_cases,0) as y_cases,
+round((IFNULL(st.y_cases,0) /pid)*100,2) as percent
+FROM
+(SELECT hospcode,count(pid) as pid FROM hdc.charge_opd 
+where date_serv BETWEEN @start_d AND @end_d  GROUP BY HOSPCODE) nd
+LEFT JOIN
+(select s.hospcode,count(s.pid) as y_cases
+from hdc.charge_opd s
+join hdc.person p on p.hospcode=s.hospcode and p.pid=s.pid
+where s.chargeitem not in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18')
+AND s.date_serv BETWEEN @start_d AND @end_d
+group by s.hospcode
+)as st 
+on nd.hospcode=st.hospcode
+LEFT JOIN hdc.chospital h on h.hoscode=nd.hospcode
+order by st.y_cases DESC  
+
+);
+
+
+
+
+#################################
+
+
+################################
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS charge_opd_chargeitem_a;
+CREATE TABLE charge_opd_chargeitem_a (
+
+distcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสอำเภอ',
+ampurname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่ออำเภอ',
+total_pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'จำนวนทั้งหมด',
+y_cases VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'จำนวน เอ๊ะ',
+percent VARCHAR(5) NOT NULl DEFAULT '' COMMENT 'ร้อยละ เอ๊ะ',
+PRIMARY KEY (distcode)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE charge_opd_chargeitem_a;
+
+INSERT INTO charge_opd_chargeitem_a
+(
+distcode,ampurname,total_pid,y_cases,percent
+)
+
+( 
+
+SELECT concat(@province,nd.distcode) as distcode,nd.ampurname,nd.pid,
+IFNULL(st.y_cases,0) as y_cases,
+round((IFNULL(st.y_cases,0) /pid)*100,2) as percent
+FROM
+(SELECT c.distcode,ca.ampurname,count(s.pid) as pid FROM hdc.charge_opd s
+join hdc.chospital c on c.hoscode=s.HOSPCODE
+JOIN hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province
+where s.DATE_SERV BETWEEN @start_d AND @end_d 
+GROUP BY c.distcode) nd
+left JOIN 
+(select c.distcode,count(s.pid) as y_cases
+from hdc.charge_opd s
+join hdc.chospital c on c.hoscode=s.HOSPCODE
+where s.chargeitem not in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18')
+AND s.date_serv BETWEEN @start_d AND @end_d 
+group by c.distcode
+)as st 
+on nd.distcode=st.distcode
+order by st.y_cases desc
+
+
+);
+
+ 
+
+################################################################################
+
+UPDATE sys_log
+SET e_time=CURRENT_TIME(), log_status='complete'
+WHERE procedure_names=procedure_name ;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
 -- Procedure structure for `chfu_BP_not_standard`
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `chfu_BP_not_standard`;
@@ -230,13 +396,11 @@ HOSPCODE,hosname,pid,date_serv,sbp,dbp,waist_cm
 )
 
 ( 
-select hospcode, h.hosname, c.pid, c.date_serv, c.sbp, c.dbp, c.waist_cm  
-from hdc.chronicfu c
-left join hdc.chospital h on h.hoscode=c.hospcode
-where c.date_serv between @start_d and @end_d and c.sbp<>'0' 
-and (c.sbp<=c.dbp  or c.sbp <50 or c.dbp <50 or c.waist_cm <40 or c.waist_cm >160 )
-group by hospcode,pid,date_serv
-order by hospcode
+select hospcode, h.hosname, pid, date_serv, sbp, dbp, waist_cm from hdc.chronicfu c 
+left join hdc.chospital h on h.hoscode=c.hospcode 
+where date_serv between @start_d and @end_d 
+and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
+group by hospcode,pid,date_serv order by hospcode
 );
 
 
@@ -271,7 +435,7 @@ round((IFNULL(st.y_cases,0)/seq)*100,2) as percent
 	 from hdc.chronicfu c
 	 left join hdc.chospital h on h.hoscode=c.hospcode
 	 where date_serv between @start_d and @end_d and sbp<>'0' 
-	 and (sbp<=dbp  or sbp <50 or dbp <50 or waist_cm <40 or waist_cm >160 )
+	 and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
 	 group by hospcode )as st
 
 LEFT JOIN 
@@ -316,7 +480,7 @@ FROM
 	 left join hdc.chospital h on h.hoscode=c.hospcode
 	 JOIN hdc.campur ca on ca.ampurcode = h.distcode and ca.changwatcode=@province
 	 where date_serv between @start_d and @end_d and sbp<>'0' 
-	 and (sbp<=dbp  or sbp <50 or dbp <50 or waist_cm <40 or waist_cm >160 )
+	 and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
 	 GROUP BY h.distcode) nd
 
 left JOIN 
@@ -548,8 +712,8 @@ hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบ
 pid varchar(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
 fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-นามสกุล',
 date_serv date COMMENT 'วันรับบริการ',
-labcode VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'รหัสการตรวจทางห้องปฏิบัติการ',
-labresult VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'ผล Lab',
+labcode VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'รหัสการตรวจทางห้องปฏิบัติการ',
+labresult VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'ผล Lab',
 remark VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'หมายเหตุ',
 PRIMARY KEY (id)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -561,7 +725,7 @@ HOSPCODE,hosname,pid,fullname,date_serv,labcode,labresult,remark
 )
 
 ( 
-select  t.hospcode,h.hosname,p.pid,concat(p.name,' ',p.lname)as fullname, date_serv, concat(labtest,' ',n.en)labcode
+select  t.hospcode,h.hosname,p.pid,concat(p.name,' ',p.lname)as fullname, date_serv,t.labtest as labcode
 ,labresult,' ผลตรวจ??'  as remark 
 from hdc.labfu t
 inner  join hdc.person p on p.pid=t.pid and p.hospcode=t.hospcode
@@ -682,6 +846,174 @@ left JOIN
 on nd.distcode=st.distcode 
 order by st.y_cases desc
 );
+
+################################################################################
+
+UPDATE sys_log
+SET e_time=CURRENT_TIME(), log_status='complete'
+WHERE procedure_names=procedure_name ;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for `labfu_Creatinine_not_standard`
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `labfu_Creatinine_not_standard`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `labfu_Creatinine_not_standard`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+BEGIN 
+IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
+set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
+set @end_d := e_runtime;
+ELSE 
+UPDATE sys_log
+SET log_status='conf_runtime_err'
+WHERE procedure_name=procedure_name ;
+END IF;
+
+SET @province:=(SELECT province_config FROM sys_config LIMIT 1);
+###########################################################################################################################################
+DROP TABLE IF EXISTS labfu_Creatinine_not_standard_t;
+CREATE TABLE labfu_Creatinine_not_standard_t (
+id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
+HOSPCODE varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
+PID VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
+fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
+LABTEST VARCHAR(50) NOT NULL DEFAULT '' COMMENT 'การเจาะตรวจCreatinine',
+date_serv date COMMENT 'วันที่รับบริการ',
+LABRESULT varchar(5) NOT NULL DEFAULT '' COMMENT 'ผลการตรวจCreatinine',
+CHRONIC varchar(50) NOT NULL DEFAULT '' COMMENT 'รหัสโรคเรื้อรัง',
+
+
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE labfu_Creatinine_not_standard_t;
+
+INSERT INTO labfu_Creatinine_not_standard_t
+(
+HOSPCODE,hosname,PID,fullname,LABTEST,date_serv,LABRESULT,CHRONIC
+)
+
+( 
+select t.HOSPCODE,t.hosname,t.PID,t.fullname,t.LABTEST,t.DATE_SERV,t.LABRESULT,group_concat(t.CHRONIC) as CHRONIC FROM
+(SELECT l.HOSPCODE, ch.hosname,l.PID,concat(p.`NAME`,' ',p.LNAME)as fullname
+,if(l.LABTEST='11',lt.LABTEST,ltn.TH) AS LABTEST,l.DATE_SERV,l.LABRESULT,c.CHRONIC 
+FROM hdc.labfu l 
+INNER JOIN (SELECT HOSPCODE,PID,CHRONIC FROM hdc.chronic 
+WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02')c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
+LEFT JOIN hdc.clabtest lt ON lt.id_labtest = l.LABTEST
+LEFT JOIN hdc.clabtest_new ltn ON ltn.`code` = l.LABTEST 
+left join hdc.person p on p.hospcode=l.hospcode and p.pid=l.pid 
+LEFT JOIN hdc.chospital ch ON ch.hoscode = l.HOSPCODE 
+WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+ORDER BY l.HOSPCODE) t
+group by t.HOSPCODE,t.PID
+order by t.CHRONIC
+
+
+);
+
+
+
+
+
+#################################
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS labfu_Creatinine_not_standard_s;
+CREATE TABLE labfu_Creatinine_not_standard_s (
+id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
+hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
+distcode varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสอำเภอ',
+total_pid VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'ตรวจ Creatinine ทั้งหมด',
+y_cases VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'นอกพิสัยที่ควรเป็นไปได้ (0.01 - 25 )',
+percent VARCHAR(5) NOT NULl DEFAULT '' COMMENT 'ร้อยละ',
+
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE labfu_Creatinine_not_standard_s;
+
+INSERT INTO labfu_Creatinine_not_standard_s
+(
+hospcode,hosname,distcode,total_pid,y_cases,percent
+)
+
+( 
+
+SELECT nd.hospcode,nd.hosname,concat(@province,nd.distcode) as distcode ,nd.pid,IFNULL(st.y_cases,0) as y_cases,
+round((IFNULL(st.y_cases,0)/pid)*100,2) as percent
+ FROM (SELECT l.HOSPCODE,ch.hosname,ch.distcode ,COUNT(l.pid) as pid FROM hdc.labfu l 
+INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic 
+WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15' or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02')c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
+LEFT JOIN hdc.chospital ch on ch.hoscode=l.HOSPCODE 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') 
+GROUP BY l.HOSPCODE) nd 
+LEFT JOIN (SELECT l.HOSPCODE,ch.hosname,COUNT(distinct l.pid) as y_cases FROM hdc.labfu l 
+INNER JOIN (SELECT HOSPCODE,PID,CHRONIC FROM hdc.chronic 
+WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02')c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
+LEFT JOIN hdc.clabtest lt ON lt.id_labtest = l.LABTEST 
+LEFT JOIN hdc.chospital ch ON ch.hoscode = l.HOSPCODE 
+WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+GROUP BY l.HOSPCODE )as st on nd.hospcode=st.hospcode 
+ORDER BY st.hospcode
+
+
+);
+
+
+
+
+#################################
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS labfu_Creatinine_not_standard_a;
+CREATE TABLE labfu_Creatinine_not_standard_a (
+distcode varchar(15) NOT NULL DEFAULT '' COMMENT ' รหัสอำเภอ',
+ampurname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่ออำเภอ',
+total_pid VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'ตรวจ Creatinine ทั้งหมด',
+y_cases VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'นอกพิสัยที่ควรเป็นไปได้ (0.01 - 25 )',
+percent VARCHAR(5) NOT NULl DEFAULT '' COMMENT 'ร้อยละ',
+PRIMARY KEY (distcode)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE labfu_Creatinine_not_standard_a;
+
+INSERT INTO labfu_Creatinine_not_standard_a
+(
+distcode,ampurname,total_pid,y_cases,percent
+)
+
+( 
+SELECT concat(@province,nd.distcode) as distcode,nd.ampurname as ampurname,nd.pid AS total_pid, 
+IFNULL(st.y_cases,0) as y_cases, 
+round((IFNULL(st.y_cases,0) /pid)*100,2) as percent 
+FROM (SELECT c.distcode,ca.ampurname,COUNT(l.pid) as pid FROM hdc.labfu l 
+INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic 
+WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02') c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
+JOIN hdc.chospital c on c.hoscode=l.HOSPCODE 
+JOIN hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581902') 
+GROUP BY c.distcode) nd 
+left JOIN (SELECT ch.distcode,COUNT(DISTINCT l.pid) as y_cases 
+FROM hdc.labfu l 
+INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic 
+WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189'   and TYPEDISCH <>'02') c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
+LEFT JOIN hdc.clabtest lt on lt.id_labtest=l.LABTEST 
+LEFT JOIN hdc.chospital ch on ch.hoscode=l.HOSPCODE 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+GROUP BY ch.distcode )as st on nd.distcode=st.distcode 
+order by st.y_cases desc
+);
+
+ 
 
 ################################################################################
 
@@ -996,6 +1328,167 @@ order by st.y_cases desc
 
 );
 
+
+ 
+
+################################################################################
+
+UPDATE sys_log
+SET e_time=CURRENT_TIME(), log_status='complete'
+WHERE procedure_names=procedure_name ;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for `person_notcid`
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `person_notcid`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `person_notcid`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+BEGIN 
+IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
+set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
+set @end_d := e_runtime;
+ELSE 
+UPDATE sys_log
+SET log_status='conf_runtime_err'
+WHERE procedure_name=procedure_name ;
+END IF;
+
+SET @province:=(SELECT province_config FROM sys_config LIMIT 1);
+###########################################################################################################################################
+DROP TABLE IF EXISTS person_notcid_t;
+CREATE TABLE person_notcid_t (
+id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
+hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+cid varchar(13) NOT NULL DEFAULT '' COMMENT 'รหัสบุคคล',
+pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
+name varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ',
+lname varchar(100) NOT NULL DEFAULT '' COMMENT 'สกุล',
+sex varchar(2) NOT NULL DEFAULT '' COMMENT 'เพศ',
+nation varchar(3) NOT NULL DEFAULT '' COMMENT 'สัญชาติ',
+typearea varchar(2) NOT NULL DEFAULT '' COMMENT 'TYPE AREA',
+
+
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE person_notcid_t;
+
+INSERT INTO person_notcid_t
+(
+hospcode,cid,pid,name,lname,sex,nation,typearea
+)
+
+( 
+
+select p.hospcode, p.cid, p.pid, name, lname, sex, nation, typearea
+from hdc.person  p
+join hdc.service s on s.HOSPCODE=p.HOSPCODE and p.pid=s.pid
+where cid like '0%' and nation='099' and typearea in (1,3)
+and (lname like '%พม่า%' or lname like 'เขมร' or lname like 'กัมพูชา' or lname like 'ลาว')
+group by p.hospcode, p.cid, p.pid
+
+);
+
+
+
+
+#################################
+
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS person_notcid_s;
+CREATE TABLE person_notcid_s (
+id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
+hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
+distcode varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสอำเภอ',
+total_pid VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'จำนวนทั้งหมด',
+y_cases VARCHAR(5) NOT NULL DEFAULT '' COMMENT 'จำนวน เอ๊ะ',
+percent VARCHAR(5) NOT NULl DEFAULT '' COMMENT 'ร้อยละ เอ๊ะ',
+
+PRIMARY KEY (id)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE person_notcid_s;
+
+INSERT INTO person_notcid_s
+(
+hospcode,hosname,distcode,total_pid,y_cases,percent
+)
+
+( 
+SELECT nd.hospcode,c.hosname,concat(@province,c.distcode) as distcode ,nd.pid,IFNULL(st.y_cases,0) as y_cases,
+round((IFNULL(st.y_cases,0) /pid)*100,2) as percent
+FROM
+(SELECT hospcode,count(DISTINCT pid) as pid from hdc.person GROUP BY HOSPCODE) nd
+LEFT JOIN
+(select p.hospcode, count(DISTINCT p.pid) as y_cases
+from hdc.person  p
+join hdc.service s on s.HOSPCODE=p.HOSPCODE and p.pid=s.pid
+where cid like '0%' and nation='099' and typearea in (1,3)
+and (lname like '%พม่า%' or lname like 'เขมร' or lname like 'กัมพูชา' or lname like 'ลาว')
+group by p.hospcode)as st
+on nd.hospcode=st.hospcode
+left join hdc.chospital c on c.hoscode=nd.HOSPCODE
+ORDER BY st.y_cases DESC
+
+
+);
+
+
+
+
+#################################
+
+
+ #Routine body goes here...
+DROP TABLE IF EXISTS person_notcid_a;
+CREATE TABLE person_notcid_a (
+distcode varchar(15) NOT NULL DEFAULT '' COMMENT ' รหัสอำเภอ',
+ampurname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่ออำเภอ',
+total_pid varchar(15) NOT NULL DEFAULT '' COMMENT 'จำนวนครั้ง',
+y_cases VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'จำนวน เอ๊ะ',
+percent varchar(5) NOT NULL DEFAULT '' COMMENT 'ร้อยละ เอ๊ะ',
+PRIMARY KEY (distcode)
+
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TRUNCATE TABLE person_notcid_a;
+
+INSERT INTO person_notcid_a
+(
+distcode,ampurname,total_pid,y_cases,percent
+)
+
+( 
+
+SELECT concat(@province,nd.distcode) as distcode,nd.ampurname,nd.pid,
+IFNULL(st.y_cases,0) as y_cases,
+round((IFNULL(st.y_cases,0) /pid)*100,2) as percent
+FROM
+(SELECT c.distcode,ca.ampurname,count(p.pid) as pid FROM hdc.person p
+join hdc.chospital c on c.hoscode=p.HOSPCODE
+join hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province
+GROUP BY c.distcode) nd
+left JOIN 
+(select c.distcode,count(DISTINCT p.pid) as y_cases
+from hdc.person p
+join hdc.service s on s.HOSPCODE=p.HOSPCODE and p.pid=s.pid
+join hdc.chospital c on c.hoscode=p.HOSPCODE
+where cid like '0%' and nation='099' and typearea in (1,3)
+and (lname like '%พม่า%' or lname like 'เขมร' or lname like 'กัมพูชา' or lname like 'ลาว')
+group by c.distcode
+)as st 
+on nd.distcode=st.distcode
+order by st.y_cases desc
+
+
+);
 
  
 

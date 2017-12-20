@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50615
 File Encoding         : 65001
 
-Date: 2017-12-19 10:57:27
+Date: 2017-12-20 10:56:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1581,7 +1581,7 @@ DELIMITER ;
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `anc_labor_sexage_invalid`;
 DELIMITER ;;
-CREATE DEFINER=`varit`@`%` PROCEDURE `anc_labor_sexage_invalid`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `anc_labor_sexage_invalid`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
 BEGIN 
 IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
 set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
@@ -1601,7 +1601,7 @@ id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
 hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
 hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบริการ',
 pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
-fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
+name varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ',
 sex VARCHAR(1) NOT NULL DEFAULT '' COMMENT 'เพศ',
 birth date COMMENT 'วันเกิด',
 nation VARCHAR(3) NOT NULL DEFAULT '' COMMENT 'สัญชาติ',
@@ -1615,11 +1615,11 @@ PRIMARY KEY (id)
 TRUNCATE TABLE anc_labor_sexage_invalid_t;
 INSERT INTO anc_labor_sexage_invalid_t
 (
-hospcode,hosname,pid,fullname,sex,birth,nation,anc_date,age_anc,bdate,age_labor
+hospcode,hosname,pid,name,sex,birth,nation,anc_date,age_anc,bdate,age_labor
 )
 
 ( 
-select a.hospcode, h.hosname, p.pid, concat(p.name,' ',p.lname)as fullname,
+select a.hospcode, h.hosname, p.pid, p.name as name,
 p.sex, p.birth, p.nation, min(a.date_serv) as anc_date, 
 timestampdiff(year,p.birth,max(a.date_Serv)) as age_anc, l.bdate,
 timestampdiff(year,p.birth,l.bdate) as age_labor 
@@ -2113,6 +2113,8 @@ pid varchar(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคค�
 fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-สกุล',
 date_serv date COMMENT 'วันที่รับบริการ',
 chargeitem varchar(15) NOT NULL DEFAULT '' COMMENT 'หมวดของค่าบริการ',
+chargelist varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสรายการค่าบริการ',
+instype varchar(15) NOT NULL DEFAULT '' COMMENT 'สิทธิการรักษาที่เบิก',
 PRIMARY KEY (id)
 
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2121,12 +2123,14 @@ TRUNCATE TABLE charge_opd_chargeitem_t;
 
 INSERT INTO charge_opd_chargeitem_t
 (
-hospcode,hosname,pid,fullname,date_serv,chargeitem
+hospcode,hosname,pid,fullname,date_serv,chargeitem,CHARGELIST,INSTYPE
 )
 
 ( 
-select s.hospcode, h.hosname, s.pid,concat(p.`NAME`,' ',p.LNAME)as fullname, s.date_serv, s.chargeitem
+select s.hospcode, h.hosname, s.pid,concat(p.`NAME`,' ',p.LNAME)as fullname, s.date_serv, s.chargeitem ,s.CHARGELIST, s.INSTYPE
+, s.date_serv, s.cost, s.price
 from hdc.charge_opd s
+LEFT JOIN hdc.cchargeitem i on i.id_chargeitem=s.CHARGEITEM
 join hdc.person p on p.hospcode=s.hospcode and p.pid=s.pid
 join hdc.chospital h on h.hoscode=s.hospcode
 where s.chargeitem not in ('01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18')
@@ -2780,13 +2784,11 @@ HOSPCODE,hosname,pid,date_serv,sbp,dbp,waist_cm
 )
 
 ( 
-select hospcode, h.hosname, c.pid, c.date_serv, c.sbp, c.dbp, c.waist_cm  
-from hdc.chronicfu c
-left join hdc.chospital h on h.hoscode=c.hospcode
-where c.date_serv between @start_d and @end_d and c.sbp<>'0' 
-and (c.sbp<=c.dbp  or c.sbp <50 or c.dbp <50 or c.waist_cm <40 or c.waist_cm >160 )
-group by hospcode,pid,date_serv
-order by hospcode
+select hospcode, h.hosname, pid, date_serv, sbp, dbp, waist_cm from hdc.chronicfu c 
+left join hdc.chospital h on h.hoscode=c.hospcode 
+where date_serv between @start_d and @end_d 
+and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
+group by hospcode,pid,date_serv order by hospcode
 );
 
 
@@ -2821,7 +2823,7 @@ round((IFNULL(st.y_cases,0)/seq)*100,2) as percent
 	 from hdc.chronicfu c
 	 left join hdc.chospital h on h.hoscode=c.hospcode
 	 where date_serv between @start_d and @end_d and sbp<>'0' 
-	 and (sbp<=dbp  or sbp <50 or dbp <50 or waist_cm <40 or waist_cm >160 )
+	 and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
 	 group by hospcode )as st
 
 LEFT JOIN 
@@ -2866,7 +2868,7 @@ FROM
 	 left join hdc.chospital h on h.hoscode=c.hospcode
 	 JOIN hdc.campur ca on ca.ampurcode = h.distcode and ca.changwatcode=@province
 	 where date_serv between @start_d and @end_d and sbp<>'0' 
-	 and (sbp<=dbp  or sbp <50 or dbp <50 or waist_cm <40 or waist_cm >160 )
+	 and sbp >0 and ( sbp<=dbp or sbp <50 or dbp <50  or sbp<dbp ) 
 	 GROUP BY h.distcode) nd
 
 left JOIN 
@@ -5506,8 +5508,8 @@ hosname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อหน่วยบ
 pid varchar(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
 fullname varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ-นามสกุล',
 date_serv date COMMENT 'วันรับบริการ',
-labcode VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'รหัสการตรวจทางห้องปฏิบัติการ',
-labresult VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'ผล Lab',
+labcode VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'รหัสการตรวจทางห้องปฏิบัติการ',
+labresult VARCHAR(10) NOT NULL DEFAULT '' COMMENT 'ผล Lab',
 remark VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'หมายเหตุ',
 PRIMARY KEY (id)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -5519,7 +5521,7 @@ HOSPCODE,hosname,pid,fullname,date_serv,labcode,labresult,remark
 )
 
 ( 
-select  t.hospcode,h.hosname,p.pid,concat(p.name,' ',p.lname)as fullname, date_serv, concat(labtest,' ',n.en)labcode
+select  t.hospcode,h.hosname,p.pid,concat(p.name,' ',p.lname)as fullname, date_serv,t.labtest as labcode
 ,labresult,' ผลตรวจ??'  as remark 
 from hdc.labfu t
 inner  join hdc.person p on p.pid=t.pid and p.hospcode=t.hospcode
@@ -5703,7 +5705,7 @@ LEFT JOIN hdc.clabtest lt ON lt.id_labtest = l.LABTEST
 LEFT JOIN hdc.clabtest_new ltn ON ltn.`code` = l.LABTEST 
 left join hdc.person p on p.hospcode=l.hospcode and p.pid=l.pid 
 LEFT JOIN hdc.chospital ch ON ch.hoscode = l.HOSPCODE 
-WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581803') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
 ORDER BY l.HOSPCODE) t
 group by t.HOSPCODE,t.PID
 order by t.CHRONIC
@@ -5747,14 +5749,14 @@ round((IFNULL(st.y_cases,0)/pid)*100,2) as percent
 INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic 
 WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15' or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02')c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
 LEFT JOIN hdc.chospital ch on ch.hoscode=l.HOSPCODE 
-where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581803') 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') 
 GROUP BY l.HOSPCODE) nd 
 LEFT JOIN (SELECT l.HOSPCODE,ch.hosname,COUNT(distinct l.pid) as y_cases FROM hdc.labfu l 
 INNER JOIN (SELECT HOSPCODE,PID,CHRONIC FROM hdc.chronic 
 WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02')c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
 LEFT JOIN hdc.clabtest lt ON lt.id_labtest = l.LABTEST 
 LEFT JOIN hdc.chospital ch ON ch.hoscode = l.HOSPCODE 
-WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581803') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+WHERE l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11',' 0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
 GROUP BY l.HOSPCODE )as st on nd.hospcode=st.hospcode 
 ORDER BY st.hospcode
 
@@ -5794,7 +5796,7 @@ INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic
 WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189' and TYPEDISCH <>'02') c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
 JOIN hdc.chospital c on c.hoscode=l.HOSPCODE 
 JOIN hdc.campur ca on ca.ampurcode = c.distcode and ca.changwatcode=@province 
-where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581803') 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581902') 
 GROUP BY c.distcode) nd 
 left JOIN (SELECT ch.distcode,COUNT(DISTINCT l.pid) as y_cases 
 FROM hdc.labfu l 
@@ -5802,7 +5804,7 @@ INNER JOIN (SELECT HOSPCODE,PID,CHRONIC from hdc.chronic
 WHERE CHRONIC BETWEEN 'E10' AND 'E149' OR CHRONIC BETWEEN 'I10' AND 'I15'  or CHRONIC BETWEEN 'N18' AND 'N189'   and TYPEDISCH <>'02') c ON l.PID = c.PID AND l.HOSPCODE = c.HOSPCODE 
 LEFT JOIN hdc.clabtest lt on lt.id_labtest=l.LABTEST 
 LEFT JOIN hdc.chospital ch on ch.hoscode=l.HOSPCODE 
-where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581803') AND l.labresult NOT BETWEEN '0.01' AND '25' 
+where l.date_serv BETWEEN @start_d AND @end_d and l.labtest in ('11','0581902') AND l.labresult NOT BETWEEN '0.01' AND '25' 
 GROUP BY ch.distcode )as st on nd.distcode=st.distcode 
 order by st.y_cases desc
 );
@@ -5988,7 +5990,7 @@ DELIMITER ;
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `labfu_labtest_not_standard`;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `labfu_labtest_not_standard`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+CREATE DEFINER=`varit`@`%` PROCEDURE `labfu_labtest_not_standard`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
 BEGIN 
 IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
 set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
@@ -10654,7 +10656,7 @@ DROP TABLE IF EXISTS person_notcid_t;
 CREATE TABLE person_notcid_t (
 id int(15) NOT NULL AUTO_INCREMENT COMMENT 'ลำดับ',
 hospcode varchar(5) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
-cid varchar(13) NOT NULL DEFAULT '' COMMENT 'รหัสหน่วยบริการ',
+cid varchar(13) NOT NULL DEFAULT '' COMMENT 'รหัสบุคคล',
 pid VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'ทะเบียนบุคคล',
 name varchar(100) NOT NULL DEFAULT '' COMMENT 'ชื่อ',
 lname varchar(100) NOT NULL DEFAULT '' COMMENT 'สกุล',
