@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50615
 File Encoding         : 65001
 
-Date: 2017-12-20 10:56:03
+Date: 2017-12-20 12:09:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2115,6 +2115,8 @@ date_serv date COMMENT 'วันที่รับบริการ',
 chargeitem varchar(15) NOT NULL DEFAULT '' COMMENT 'หมวดของค่าบริการ',
 chargelist varchar(15) NOT NULL DEFAULT '' COMMENT 'รหัสรายการค่าบริการ',
 instype varchar(15) NOT NULL DEFAULT '' COMMENT 'สิทธิการรักษาที่เบิก',
+cost varchar(15) NOT NULL DEFAULT '' COMMENT 'ราคาทุนของบริการ',
+price varchar(15) NOT NULL DEFAULT '' COMMENT 'ค่าบริการทั้งหมด (ราคาขาย)',
 PRIMARY KEY (id)
 
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -2123,12 +2125,12 @@ TRUNCATE TABLE charge_opd_chargeitem_t;
 
 INSERT INTO charge_opd_chargeitem_t
 (
-hospcode,hosname,pid,fullname,date_serv,chargeitem,CHARGELIST,INSTYPE
+hospcode,hosname,pid,fullname,date_serv,chargeitem,CHARGELIST,INSTYPE,cost,price
 )
 
 ( 
 select s.hospcode, h.hosname, s.pid,concat(p.`NAME`,' ',p.LNAME)as fullname, s.date_serv, s.chargeitem ,s.CHARGELIST, s.INSTYPE
-, s.date_serv, s.cost, s.price
+,s.cost, s.price
 from hdc.charge_opd s
 LEFT JOIN hdc.cchargeitem i on i.id_chargeitem=s.CHARGEITEM
 join hdc.person p on p.hospcode=s.hospcode and p.pid=s.pid
@@ -5990,7 +5992,7 @@ DELIMITER ;
 -- ----------------------------
 DROP PROCEDURE IF EXISTS `labfu_labtest_not_standard`;
 DELIMITER ;;
-CREATE DEFINER=`varit`@`%` PROCEDURE `labfu_labtest_not_standard`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `labfu_labtest_not_standard`(IN s_runtime date, IN e_runtime date, IN procedure_name VARCHAR(100))
 BEGIN 
 IF(s_runtime IS NOT NULL AND  e_runtime IS NOT NULL) THEN
 set @start_d := s_runtime; /* วันที่เกิด ของแฟ้ม labor ,วันจำหน่ายของแฟ้ม admission*/
